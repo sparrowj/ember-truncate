@@ -146,11 +146,13 @@ export default Ember.Component.extend(ResizeHandlerMixin, {
   didUpdateAttrs: diffAttrs('text', 'truncate', 'lines',  function(changedAttrs, ...args) {
     this._super(...args);
 
-    if (didAttrChange(changedAttrs.truncate)) {
+    const firstRun = changedAttrs === null;
+
+    if (firstRun || changedAttrs.truncate) {
       this.set('_truncate', this.get('truncate'));
     }
 
-    if (didAttrChange(changedAttrs.text) || didAttrChange(changedAttrs.truncate) || didAttrChange(changedAttrs.lines)) {
+    if (firstRun || changedAttrs.text || changedAttrs.truncate || changedAttrs.lines) {
       this._resetState();
     }
   }),
@@ -277,22 +279,4 @@ function shouldSupportButtonA11y(type) {
 
     return shouldShowButton && seeButtonA11yText.length && seeButtonText !== seeButtonA11yText;
   };
-}
-
-/**
- * Helper function to determine if an attribute has changed.
- * @private
- * @param attrs {Array}
- * @return {Boolean}
- */
-function didAttrChange(attrs) {
-  let oldAttr = attrs[0];
-  let newAttr = attrs[1];
-
-  // First run screnarios
-  if (attrs == null || oldAttr == null) {
-    return true;
-  }
-
-  return oldAttr !== newAttr;
 }
